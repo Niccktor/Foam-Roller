@@ -17,15 +17,21 @@ namespace Foam_Roller
             //Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             // Set our view from the "main" layout resource
 
+
             SetContentView(Resource.Layout.activity_main);
             EditText UserNameText = FindViewById<EditText>(Resource.Id.UserNameText);
             TextView ResponseText = FindViewById<TextView>(Resource.Id.ResponseText);
             Button BtValide = FindViewById<Button>(Resource.Id.BtValide);
 
             // Initialisation Bluetooth
-            TextView BluetoothStatusText = FindViewById<TextView>(Resource.Id.BluetoothStatus);
+            TextView BluetoothStatusText = FindViewById<TextView>(Resource.Id.BluetoothStatusText);
+            TextView test = FindViewById<TextView>(Resource.Id.test); 
             BluetoothAdapter Bluetooth = BluetoothAdapter.DefaultAdapter;
-            Core_Bluetooth.Bluetooth.isBluetoothSupported(Bluetooth, BluetoothStatusText);
+            if (Core_Bluetooth.Bluetooth.isBluetoothSupported(Bluetooth, BluetoothStatusText))
+            {
+                Core_Bluetooth.Bluetooth.showPairedDevices(Bluetooth, test);
+            }
+
 
             // Bouton Valide, Vérifie si l'utilisateur est connu.
             BtValide.Click += (sender, e) =>

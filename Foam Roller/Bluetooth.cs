@@ -1,7 +1,15 @@
-﻿using System.Text;
-using System;
+﻿using Android.App;
+using Android.OS;
+using Android.Runtime;
+using AndroidX.AppCompat.App;
 using Android.Widget;
 using Android.Bluetooth;
+
+
+
+using System.Collections;
+
+
 
 namespace Core_Bluetooth
 {
@@ -25,6 +33,25 @@ namespace Core_Bluetooth
                 result = true;
             }
             return (result);
+        }
+        public static void showPairedDevices(BluetoothAdapter Bluetooth, TextView test)
+        {
+
+            int i = 0;
+             
+            System.Collections.Generic.ICollection<BluetoothDevice> bondedDevices = Bluetooth.BondedDevices;
+            if (bondedDevices.Count > 0)
+            {
+                foreach (BluetoothDevice device in bondedDevices)
+                {
+                    test.Text = i.ToString() + " Address : " + device.Address + " Name : " + device.Name;
+                    i++;
+                }
+            }
+            else
+            {
+                test.Text = "Rien";
+            }
         }
     }
 }

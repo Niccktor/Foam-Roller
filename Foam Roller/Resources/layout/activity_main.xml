@@ -16,7 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView1"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        tools:ignore="HardcodedText" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,7 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/BtValide"
-        android:visibility="visible" />
+        android:visibility="visible"
+        tools:ignore="HardcodedText" />
     <TextView
         android:text=""
         android:layout_width="match_parent"
@@ -38,30 +40,15 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/BluetoothStatus"
+        android:id="@+id/BluetoothStatusText"
         android:visibility="visible" />
-    <RadioGroup
-        android:minWidth="25px"
-        android:minHeight="25px"
+    <TextView
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/radioGroup1">
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="A"
-            android:id="@+id/radioButton1" />
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="B"
-            android:id="@+id/radioButton2" />
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="C"
-            android:id="@+id/radioButton3" />
-    </RadioGroup>
+        android:id="@+id/test" />
+
+
 
 </LinearLayout>
