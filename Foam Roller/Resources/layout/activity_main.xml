@@ -33,6 +33,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/ResponseText"
         android:visibility="gone" />
+    <TextView
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/BluetoothStatus"
+        android:visibility="visible" />
     <RadioGroup
         android:minWidth="25px"
         android:minHeight="25px"

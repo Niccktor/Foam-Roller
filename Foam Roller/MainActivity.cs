@@ -3,6 +3,7 @@ using Android.OS;
 using Android.Runtime;
 using AndroidX.AppCompat.App;
 using Android.Widget;
+using Android.Bluetooth;
 
 namespace Foam_Roller
 {
@@ -21,9 +22,15 @@ namespace Foam_Roller
             TextView ResponseText = FindViewById<TextView>(Resource.Id.ResponseText);
             Button BtValide = FindViewById<Button>(Resource.Id.BtValide);
 
+            // Initialisation Bluetooth
+            TextView BluetoothStatusText = FindViewById<TextView>(Resource.Id.BluetoothStatus);
+            BluetoothAdapter Bluetooth = BluetoothAdapter.DefaultAdapter;
+            Core_Bluetooth.Bluetooth.isBluetoothSupported(Bluetooth, BluetoothStatusText);
+
+            // Bouton Valide, Vérifie si l'utilisateur est connu.
             BtValide.Click += (sender, e) =>
             {
-                string Response = Core.UserName.CheckUser(UserNameText.Text);
+                string Response = Core.UserName.CheckUser(UserNameText.Text); 
                 if (string.IsNullOrWhiteSpace(Response))
                 {
                     ResponseText.Text = "";
