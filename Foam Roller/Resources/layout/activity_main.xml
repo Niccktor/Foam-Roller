@@ -51,24 +51,33 @@
         android:layout_height="wrap_content"
         android:id="@+id/gridLayout1">
         <Button
-            android:text="Button"
+            android:text="Test"
             android:id="@+id/test1"
             android:layout_height="wrap_content"
             android:maxWidth="1000px"
-            android:minWidth="100px" />
+            android:minWidth="100px"
+            android:layout_width="wrap_content" />
         <Button
             android:text="Button"
             android:id="@+id/test2"
             android:layout_height="wrap_content"
             android:maxWidth="1000px"
-            android:minWidth="100px" />
+            android:minWidth="100px"
+            android:layout_width="wrap_content"/>
         <Button
             android:text="Button"
             android:id="@+id/test3"
             android:layout_height="wrap_content"
             android:maxWidth="1000px"
-            android:minWidth="100px" />
+            android:minWidth="100px" 
+            android:layout_width="wrap_content" />
     </GridLayout>
+    <Button
+        android:text="Connexion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Connexion" />
+
 
 
 
