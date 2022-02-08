@@ -7,6 +7,7 @@ using Android.Bluetooth;
 using Android.Util;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Foam_Roller
 {
@@ -44,20 +45,25 @@ namespace Foam_Roller
 
             TextView test = FindViewById<TextView>(Resource.Id.BluetoothStatusText);
             BluetoothSocket socket = null;
+
             System.Threading.Thread listenThread = new System.Threading.Thread(listener);
             listenThread.Abort();
 
-            test1.Click += delegate
+            test1.Click += async (sender, args) =>
             {
+                test1.Visibility = Android.Views.ViewStates.Gone;
+                await Recive(btConnection, test);
+                #region Old
+                /*
                 byte[] read = new byte[20];
-                    //thisTime = DateTime.Now;
-                    try
-                    {
+                try { 
+                    
                     if (!btConnection.thisSocket.IsConnected)
                         test.Text += "Je ne suis pas co";
-                    //test.Text += "Je suis co
 
-                    btConnection.thisSocket.InputStream.Read(read, 0, 17);
+                    //if (btConnection.thisSocket.InputStream.Length > 0)
+                        btConnection.thisSocket.InputStream.Read(read, 0, 1);
+                    btConnection.thisSocket.InputStream.Flush();
                     //btConnection.thisSocket.InputStream.Close();
                     RunOnUiThread(() =>
                     {
@@ -68,7 +74,33 @@ namespace Foam_Roller
                     catch
                     {
                         test.Text += "i cant Read";
+                    }*/
+                #endregion
+            };
+
+
+
+
+            test2.Click += async (sender, args) =>
+            {
+                await doAsync(btConnection, test);
+                #region Old
+                /*string send = "Bonjour";
+
+                try
+                {
+                    if (btConnection.thisSocket.IsConnected)
+                    {
+                        btConnection.thisSocket.OutputStream.Write(Encoding.ASCII.GetBytes(send + "\n") , 0, send.Length + 1);
+                        btConnection.thisSocket.OutputStream.Flush();
+                        test.Text += send;
                     }
+                }
+                catch (Exception e)
+                {
+                    test.Text += "t";
+                }*/
+                #endregion
             };
 
             Connexion.Click += delegate
@@ -95,19 +127,21 @@ namespace Foam_Roller
                     socket = btConnection.thisDevice.CreateInsecureRfcommSocketToServiceRecord(Java.Util.UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
                     btConnection.thisSocket = socket;
                 }
-                try { 
+                try {
+
                     if (!btConnection.thisSocket.IsConnected)
                         btConnection.thisSocket.ConnectAsync();
-                    if (btConnection.thisSocket.IsConnected)
-                        test.Text += "Connected";
-                    if (listenThread.IsAlive == false)
+                    while (!btConnection.thisSocket.IsConnected)
                     {
-                        listenThread.Start();
+                        
+                        test.Text = "Attente de connection";
                     }
+                    if (btConnection.thisSocket.IsConnected)
+                        test.Text = "Connected";
                 }
                 catch (Exception e)
                 {
-                    test.Text += " Tj pas co FDP ";
+                    test.Text = "Pas de conection";
                 }
             };
 
@@ -203,6 +237,7 @@ namespace Foam_Roller
                     ResponseText.Visibility = Android.Views.ViewStates.Visible;
                 }
             };
+
             void listener()
             {
 
@@ -224,7 +259,6 @@ namespace Foam_Roller
 
                 }
             }
-
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
@@ -233,9 +267,61 @@ namespace Foam_Roller
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
+        public async Task Recive(BluetoothConnection btConnection, TextView test)
+        {
+            await Task.Run(() =>
+            {
+                while (true)
+                {
+                    byte[] read = new byte[20];
+                    try
+                    {
+
+                        if (!btConnection.thisSocket.IsConnected)
+                        {
+                            test.Text += "Je ne suis pas co";
+                            break;
+                        }
+
+                        btConnection.thisSocket.InputStream.Read(read, 0, 20);
+                        btConnection.thisSocket.InputStream.Flush();
+
+                        RunOnUiThread(() =>
+                        {
+                            test.Text += Encoding.Default.GetString(read);
+                        });
+                    }
+                    catch
+                    {
+                        test.Text += "i cant Read";
+                    }
+                }
+            });
+        }
+        public async Task doAsync(BluetoothConnection btConnection, TextView test)
+        {
+            await Task.Run(() =>
+                {
+                    string send = "Bonjour";
+
+                    try
+                    {
+                        if (btConnection.thisSocket.IsConnected)
+                        {
+                            btConnection.thisSocket.OutputStream.Write(Encoding.ASCII.GetBytes(send + "\n"), 0, send.Length + 1);
+                            btConnection.thisSocket.OutputStream.Flush();
+                            test.Text += send;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        test.Text += "t";
+                    }
+                });
+        }
+
         public class BluetoothConnection
         {
-
             public void getAdapter() { this.thisAdapter = BluetoothAdapter.DefaultAdapter; }
             public void getDevice()
             {
@@ -253,10 +339,9 @@ namespace Foam_Roller
             public BluetoothDevice thisDevice { get; set; }
 
             public BluetoothSocket thisSocket { get; set; }
-
+            
 
 
         }
     }
-
 }
