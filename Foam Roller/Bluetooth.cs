@@ -131,7 +131,7 @@ namespace MyBluetooth
                     {
                         mainActivity.RunOnUiThread(() =>
                         {
-                            text.Text = "Connected";
+                            text.Text = "Connecter";
 
                         });
                     }
