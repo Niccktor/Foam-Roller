@@ -6,8 +6,7 @@ using Android.Widget;
 using Android.Bluetooth;
 using Android.Util;
 using System;
-using System.Text;
-using System.Threading.Tasks;
+
 
 using MyBluetooth;
 
@@ -33,21 +32,19 @@ namespace Foam_Roller
             TextView ResponseText = FindViewById<TextView>(Resource.Id.ResponseText);
             Button BtValide = FindViewById<Button>(Resource.Id.BtValide);
             Button Connexion = FindViewById<Button>(Resource.Id.Connexion);
-
             GridLayout grid = FindViewById<GridLayout>(Resource.Id.gridLayout1);
             Button test1 = FindViewById<Button>(Resource.Id.test1);
             Button test2 = FindViewById<Button>(Resource.Id.test2);
             Button test3 = FindViewById<Button>(Resource.Id.test3);
+
 
             test1.SetWidth(display.WidthPixels / 3);
             test2.SetWidth(display.WidthPixels / 3);
             test3.SetWidth(display.WidthPixels / 3);
 
             TextView test = FindViewById<TextView>(Resource.Id.BluetoothStatusText);
-            BluetoothSocket socket = null;
-
-            System.Threading.Thread listenThread = new System.Threading.Thread(listener);
-            listenThread.Abort();
+            if (btConnection == null)
+                btConnection = new BluetoothConnection();
 
             test1.Click += async (sender, args) =>
             {
@@ -79,11 +76,9 @@ namespace Foam_Roller
             };
 
 
-
-
             test2.Click += async (sender, args) =>
             {
-                await btConnection.send(test, UserNameText);
+                await btConnection.send(test, UserNameText, this);
                 #region Old
                 /*string send = "Bonjour";
 
@@ -103,11 +98,15 @@ namespace Foam_Roller
                 #endregion
             };
 
-            Connexion.Click += delegate
+            Connexion.Click += async (sender, args) =>
             {
+                Connexion.Visibility = Android.Views.ViewStates.Gone;
+                await btConnection.conect(test, this);
+                #region old
+                /*
                 if (btConnection == null)
                 {
-                    listenThread.Start();
+                    //listenThread.Start();
 
                     btConnection = new BluetoothConnection();
                     btConnection.getAdapter();
@@ -134,7 +133,6 @@ namespace Foam_Roller
                         btConnection.thisSocket.ConnectAsync();
                     while (!btConnection.thisSocket.IsConnected)
                     {
-
                         test.Text = "Attente de connection";
                     }
                     if (btConnection.thisSocket.IsConnected)
@@ -143,7 +141,8 @@ namespace Foam_Roller
                 catch (Exception e)
                 {
                     test.Text = "Pas de conection";
-                }
+                }*/
+                #endregion
             };
 
 
@@ -238,29 +237,6 @@ namespace Foam_Roller
                     ResponseText.Visibility = Android.Views.ViewStates.Visible;
                 }
             };
-
-            void listener()
-            {
-
-                while (true)
-                {
-                    //thisTime = DateTime.Now;
-                    try
-                    {
-
-                        if (btConnection.thisSocket.InputStream.CanRead)
-                        {
-                            test.Text = "I can read";
-                        }
-                        //btConnection.thisSocket.InputStream.Close();
-                    }
-                    catch
-                    {
-                        test.Text += "i cant Read";
-                    }
-
-                }
-            }
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {

@@ -1,5 +1,4 @@
-﻿using Android.App;
-using Android.Widget;
+﻿using Android.Widget;
 using Android.Bluetooth;
 using System.Threading.Tasks;
 using System.Text;
@@ -35,7 +34,11 @@ namespace MyBluetooth
 
                         if (!this.thisSocket.IsConnected)
                         {
-                            test.Text += "Je ne suis pas co";
+                            
+                            mainActivity.RunOnUiThread(() =>
+                            {
+                                test.Text += "Socket non connecté.";
+                            });
                             break;
                         }
 
@@ -49,17 +52,21 @@ namespace MyBluetooth
                     }
                     catch
                     {
-                        test.Text += "i cant Read";
+
+                        mainActivity.RunOnUiThread(() =>
+                        {
+                            test.Text += "Impossible de sur le socket.";
+                        });
+                        break ;
                     }
                 }
             });
         }
 
-        public async Task send(TextView test, EditText editText)
+        public async Task send(TextView test, EditText editText, Foam_Roller.MainActivity mainActivity)
         {
             await Task.Run(() =>
             {
-
                 try
                 {
                     if (this.thisSocket.IsConnected)
@@ -74,6 +81,72 @@ namespace MyBluetooth
                 }
             });
         }
+
+        public async Task conect(TextView text, Foam_Roller.MainActivity mainActivity)
+        {
+            await Task.Run(() =>
+            {
+                BluetoothSocket socket = null;
+                if (this != null)
+                {
+                    //listenThread.Start();
+
+                    this.getAdapter();
+                    this.thisAdapter.StartDiscovery();
+
+                    try
+                    {
+                        this.getDevice(); // Recherge le Device HC-05 dans la liste des device bounded
+                        if (this.thisDevice == null)
+                        {
+                            mainActivity.RunOnUiThread(() =>
+                            {
+                                text.Text = "Le périphérique HC-05 n'est pas appairé, veuillez aller dans les paramètres de votre téléphone et associer le périphérique.";
+                            });
+                        }
+                        this.thisDevice.SetPairingConfirmation(false);
+                        this.thisDevice.SetPairingConfirmation(true);
+                        this.thisDevice.CreateBond();
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                    this.thisAdapter.CancelDiscovery();
+                    socket = this.thisDevice.CreateInsecureRfcommSocketToServiceRecord(Java.Util.UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
+                    this.thisSocket = socket;
+                }
+                try
+                {
+
+                    if (!this.thisSocket.IsConnected)
+                        this.thisSocket.ConnectAsync();
+                    while (!this.thisSocket.IsConnected)
+                    {
+                        mainActivity.RunOnUiThread(() =>
+                        {
+                            text.Text = "Attente de connection";
+                        });
+
+                    }
+                    if (this.thisSocket.IsConnected)
+                    {
+                        mainActivity.RunOnUiThread(() =>
+                        {
+                            text.Text = "Connected";
+
+                        });
+                    }
+                }
+                catch (Exception e)
+                {
+                    mainActivity.RunOnUiThread(() =>
+                    {
+                        text.Text = "Pas de conection";
+                    });
+                }
+            });
+        }
+
         public BluetoothAdapter thisAdapter { get; set; }
         public BluetoothDevice thisDevice { get; set; }
         public BluetoothSocket thisSocket { get; set; }
