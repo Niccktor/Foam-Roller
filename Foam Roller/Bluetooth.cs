@@ -3,6 +3,7 @@ using Android.Bluetooth;
 using System.Threading.Tasks;
 using System.Text;
 using System;
+using System.Threading;
 
 
 
@@ -117,11 +118,9 @@ namespace MyBluetooth
                 }
                 try
                 {
-
-                    if (!this.thisSocket.IsConnected)
+                    while (!this.thisSocket.IsConnected) // Boucle infinie si le périphérique est éteint
+                    { 
                         this.thisSocket.ConnectAsync();
-                    while (!this.thisSocket.IsConnected)
-                    {
                         mainActivity.RunOnUiThread(() =>
                         {
                             text.Text = "Attente de connection";
