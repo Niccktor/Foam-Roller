@@ -1,57 +1,84 @@
 ﻿using Android.App;
-using Android.OS;
-using Android.Runtime;
-using AndroidX.AppCompat.App;
 using Android.Widget;
 using Android.Bluetooth;
+using System.Threading.Tasks;
+using System.Text;
+using System;
 
 
 
-using System.Collections;
-
-
-
-namespace Core_Bluetooth
+namespace MyBluetooth
 {
-    public static class Bluetooth
+    public class BluetoothConnection
     {
-
-        // isBluetoothSupported Permets de vérifier si l'appareil a un périphérique Bluetooth 
-        public static bool isBluetoothSupported(BluetoothAdapter Bluetooth, TextView BluetoothStatusText)
+        public void getAdapter() { this.thisAdapter = BluetoothAdapter.DefaultAdapter; }
+        public void getDevice()
         {
-            bool result = false;
-            if (Bluetooth == null)
+            System.Collections.Generic.ICollection<BluetoothDevice> bondedDevices = this.thisAdapter.BondedDevices;
+            foreach (BluetoothDevice device in bondedDevices)
             {
-                BluetoothStatusText.Visibility = Android.Views.ViewStates.Visible;
-                BluetoothStatusText.Text = "Device doesn't support Bluetooth.";
-                result = false;
-            }
-            else
-            {
-                BluetoothStatusText.Visibility = Android.Views.ViewStates.Visible;
-                BluetoothStatusText.Text = "Device support Bluetooth.";
-                result = true;
-            }
-            return (result);
-        }
-        public static void showPairedDevices(BluetoothAdapter Bluetooth, TextView test)
-        {
-
-            int i = 0;
-             
-            System.Collections.Generic.ICollection<BluetoothDevice> bondedDevices = Bluetooth.BondedDevices;
-            if (bondedDevices.Count > 0)
-            {
-                foreach (BluetoothDevice device in bondedDevices)
+                if (device.Name == "HC-05")
                 {
-                    test.Text = i.ToString() + " Address : " + device.Address + " Name : " + device.Name;
-                    i++;
+                    this.thisDevice = device;
                 }
             }
-            else
-            {
-                test.Text = "Rien";
-            }
         }
+        public async Task Recive(TextView test, Foam_Roller.MainActivity mainActivity)
+        {
+            await Task.Run(() =>
+            {
+                while (true)
+                {
+                    byte[] read = new byte[20];
+                    try
+                    {
+
+                        if (!this.thisSocket.IsConnected)
+                        {
+                            test.Text += "Je ne suis pas co";
+                            break;
+                        }
+
+                        this.thisSocket.InputStream.Read(read, 0, 20);
+                        this.thisSocket.InputStream.Flush();
+
+                        mainActivity.RunOnUiThread(() =>
+                        {
+                            test.Text = Encoding.Default.GetString(read);
+                        });
+                    }
+                    catch
+                    {
+                        test.Text += "i cant Read";
+                    }
+                }
+            });
+        }
+
+        public async Task send(TextView test, EditText editText)
+        {
+            await Task.Run(() =>
+            {
+
+                try
+                {
+                    if (this.thisSocket.IsConnected)
+                    {
+                        this.thisSocket.OutputStream.Write(Encoding.ASCII.GetBytes(editText.Text + "\n"), 0, editText.Text.Length + 1);
+                        this.thisSocket.OutputStream.Flush();
+                    }
+                }
+                catch (Exception e)
+                {
+                    test.Text += "t";
+                }
+            });
+        }
+        public BluetoothAdapter thisAdapter { get; set; }
+        public BluetoothDevice thisDevice { get; set; }
+        public BluetoothSocket thisSocket { get; set; }
+
+
+
     }
 }

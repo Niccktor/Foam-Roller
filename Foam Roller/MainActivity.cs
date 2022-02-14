@@ -9,6 +9,8 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 
+using MyBluetooth;
+
 namespace Foam_Roller
 {
     [Activity(Label = "@string/app_name",
@@ -41,8 +43,6 @@ namespace Foam_Roller
             test2.SetWidth(display.WidthPixels / 3);
             test3.SetWidth(display.WidthPixels / 3);
 
-
-
             TextView test = FindViewById<TextView>(Resource.Id.BluetoothStatusText);
             BluetoothSocket socket = null;
 
@@ -52,7 +52,7 @@ namespace Foam_Roller
             test1.Click += async (sender, args) =>
             {
                 test1.Visibility = Android.Views.ViewStates.Gone;
-                await Recive(btConnection, test);
+                await btConnection.Recive(test, this);
                 #region Old
                 /*
                 byte[] read = new byte[20];
@@ -83,7 +83,7 @@ namespace Foam_Roller
 
             test2.Click += async (sender, args) =>
             {
-                await doAsync(btConnection, test);
+                await btConnection.send(test, UserNameText);
                 #region Old
                 /*string send = "Bonjour";
 
@@ -127,13 +127,14 @@ namespace Foam_Roller
                     socket = btConnection.thisDevice.CreateInsecureRfcommSocketToServiceRecord(Java.Util.UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
                     btConnection.thisSocket = socket;
                 }
-                try {
+                try
+                {
 
                     if (!btConnection.thisSocket.IsConnected)
                         btConnection.thisSocket.ConnectAsync();
                     while (!btConnection.thisSocket.IsConnected)
                     {
-                        
+
                         test.Text = "Attente de connection";
                     }
                     if (btConnection.thisSocket.IsConnected)
@@ -225,7 +226,7 @@ namespace Foam_Roller
             // Bouton Valide, Vérifie si l'utilisateur est connu.
             BtValide.Click += (sender, e) =>
             {
-                string Response = Core.UserName.CheckUser(UserNameText.Text); 
+                string Response = Core.UserName.CheckUser(UserNameText.Text);
                 if (string.IsNullOrWhiteSpace(Response))
                 {
                     ResponseText.Text = "";
@@ -253,7 +254,8 @@ namespace Foam_Roller
                         }
                         //btConnection.thisSocket.InputStream.Close();
                     }
-                    catch {
+                    catch
+                    {
                         test.Text += "i cant Read";
                     }
 
@@ -266,82 +268,6 @@ namespace Foam_Roller
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-
-        public async Task Recive(BluetoothConnection btConnection, TextView test)
-        {
-            await Task.Run(() =>
-            {
-                while (true)
-                {
-                    byte[] read = new byte[20];
-                    try
-                    {
-
-                        if (!btConnection.thisSocket.IsConnected)
-                        {
-                            test.Text += "Je ne suis pas co";
-                            break;
-                        }
-
-                        btConnection.thisSocket.InputStream.Read(read, 0, 20);
-                        btConnection.thisSocket.InputStream.Flush();
-
-                        RunOnUiThread(() =>
-                        {
-                            test.Text += Encoding.Default.GetString(read);
-                        });
-                    }
-                    catch
-                    {
-                        test.Text += "i cant Read";
-                    }
-                }
-            });
-        }
-        public async Task doAsync(BluetoothConnection btConnection, TextView test)
-        {
-            await Task.Run(() =>
-                {
-                    string send = "Bonjour";
-
-                    try
-                    {
-                        if (btConnection.thisSocket.IsConnected)
-                        {
-                            btConnection.thisSocket.OutputStream.Write(Encoding.ASCII.GetBytes(send + "\n"), 0, send.Length + 1);
-                            btConnection.thisSocket.OutputStream.Flush();
-                            test.Text += send;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        test.Text += "t";
-                    }
-                });
-        }
-
-        public class BluetoothConnection
-        {
-            public void getAdapter() { this.thisAdapter = BluetoothAdapter.DefaultAdapter; }
-            public void getDevice()
-            {
-                System.Collections.Generic.ICollection<BluetoothDevice> bondedDevices = this.thisAdapter.BondedDevices;
-                foreach (BluetoothDevice device in bondedDevices)
-                {
-                    if (device.Name == "HC-05")
-                    {
-                        this.thisDevice = device;
-                    }
-                }
-            }
-
-            public BluetoothAdapter thisAdapter { get; set; }
-            public BluetoothDevice thisDevice { get; set; }
-
-            public BluetoothSocket thisSocket { get; set; }
-            
-
-
-        }
     }
+       
 }
