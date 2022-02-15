@@ -1,38 +1,20 @@
 #include <SoftwareSerial.h>
 
-SoftwareSerial bluetooth(2, 3); // RX TX 
+SoftwareSerial bluetooth(2, 3); // TX RX  
 
 int ECG = 60;
 int EMG = 10;
-int str;
+char cmd[10];
 int i;
-char payload; 
 
 void setup() {
   Serial.begin(9600);
-  bluetooth.begin(9600);
+  bluetooth.begin(9600);  
+  Serial.println("Je suis pret :");
 }
 
 void loop() {
-  if (bluetooth.available() > 0) 
-  {
-    str = bluetooth.read();
-    Serial.print((char)str);
-    str = 0;
-  }
-  payload = '\0';
-  if (Serial.available() > 0)         // Test si il y a une information sur le port serie
-  {
-    payload = Serial.read();          // lit le port serie et :'inscrit dans payload
-  }
-  if (payload != '\0')                // Permet de ne pas flood le canal de communication
-  {
-          bluetooth.print(payload);      // Ecrit sur le port serie du ZigBee pour pouvoir communiquer.
-          Serial.print(payload);            // Ecrire sur le port serie pour l'afficher a l'utilisateur
-  }
   
-  
-  /*
   if (ECG < 70)
   {
       ECG += 10;
@@ -48,12 +30,31 @@ void loop() {
   else
   {
     EMG += random(-10, 10);
+  }
+  bluetooth.println("{FC: " + String(ECG) + "}        {EMG: " + String(EMG)+ "}");
+  Serial.println("FC: "+ String(ECG) + " EMG: " + String(EMG));
+  delay(500);
+  /*char c;
+  int i;
+  while (bluetooth.available() > 0)
+  {
+    c = bluetooth.read();
+    if (c == '{')
+    {
+      i = bluetooth.readBytesUntil('}', cmd, 10);
+      cmd[i] = '\0';
+      if (strcmp(cmd, "FC") == 0)
+      {
+        ECG = random(60, 160);
+        bluetooth.println("{FC" + String(ECG)+ "}");
+        Serial.println("{FC" + String(ECG)+ "}");
+      }
+      else if (strcmp(cmd, "EMG") == 0)
+      {
+        EMG = random(20, 90);
+        bluetooth.println("{EMG" + String(EMG)+ "}");
+        Serial.println("{EMG" + String(EMG)+ "}");
+      }
+    }
   }*/
-  //str = ("FC: " + String(ECG) + " EMG: " + String(EMG) + "\n");
-  //i = str.length();
-  //bluetooth.println(str);
-  //Serial.print("Sizeof : " + String(i));
- // Serial.println(" FC: " + String(ECG) + " EMG: " + String(EMG));
-  
-  //delay(500);
 }
