@@ -12,71 +12,134 @@
     android:visibility="visible"
     android:id="@+id/linearLayout1">
     <TextView
-        android:text="bonjour, qui êtes-vous?"
+        android:text="Non connecter."
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView1"
+        android:id="@+id/status"
         android:textAlignment="center"
         tools:ignore="HardcodedText" />
+    <Button
+        android:text="Connexion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Connexion"
+        tools:ignore="HardcodedText" />
+    <GridLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gridLayout2">
+        <EditText
+            android:id="@+id/LastName"
+            android:text="Prénom"
+            android:inputType="text"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:maxWidth="1000px"
+            android:minWidth="100px"
+            android:layout_width="wrap_content"
+            tools:ignore="HardcodedText" />
+        <EditText
+            android:id="@+id/FirstName"
+            android:text="Nom"
+            android:inputType="text"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:maxWidth="1000px"
+            android:minWidth="100px"
+            android:layout_width="wrap_content"
+            tools:ignore="HardcodedText" />
+        <EditText
+            android:id="@+id/seuil"
+            android:text="Seuil FC"
+            android:inputType="text"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:maxWidth="1000px"
+            android:minWidth="100px"
+            android:layout_width="wrap_content"
+            tools:ignore="HardcodedText" />
+    </GridLayout>
     <EditText
-        android:layout_width="match_parent"
+        android:id="@+id/Exercice"
+        android:inputType="text"
+        android:text="Exercice 1"
+        android:textAlignment="center"
+        android:enabled="false"
         android:layout_height="wrap_content"
-        android:id="@+id/UserNameText"
-        android:inputType="text" />
-    <TextView
-        android:text=""
+        android:maxWidth="1000px"
+        android:minWidth="100px"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ResponseText"
-        android:visibility="gone" />
+        tools:ignore="HardcodedText" />
     <Button
         android:text="Valide"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/BtValide"
         android:visibility="visible"
+        android:enabled="false"
         tools:ignore="HardcodedText" />
-    <TextView
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/BluetoothStatusText"
-        android:visibility="visible" />
     <GridLayout
         android:minWidth="25px"
         android:minHeight="25px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/gridLayout1">
-        <Button
-            android:text="Test"
-            android:id="@+id/test1"
+        android:id="@+id/gridLayout3">
+        <TextView
+            android:text="Fréquence cardiaque"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/ECG"
+            android:textAlignment="center"
             android:layout_height="wrap_content"
             android:maxWidth="1000px"
             android:minWidth="100px"
-            android:layout_width="wrap_content" />
-        <Button
-            android:text="Button"
-            android:id="@+id/test2"
+            android:layout_width="wrap_content"
+            tools:ignore="HardcodedText" />
+        <TextView
+            android:text="EMG"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/EMG"
+            android:textAlignment="center"
             android:layout_height="wrap_content"
             android:maxWidth="1000px"
             android:minWidth="100px"
-            android:layout_width="wrap_content"/>
-        <Button
-            android:text="Button"
-            android:id="@+id/test3"
-            android:layout_height="wrap_content"
-            android:maxWidth="1000px"
-            android:minWidth="100px" 
-            android:layout_width="wrap_content" />
+            android:layout_width="wrap_content"
+            tools:ignore="HardcodedText" />
     </GridLayout>
-    <Button
-        android:text="Connexion"
+    <GridLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/Connexion" />
+        android:id="@+id/gridLayout4" >
+        <Button
+            android:text="FC"
+            android:id="@+id/getECG"
+            android:layout_height="wrap_content"
+            android:maxWidth="1000px"
+            android:minWidth="100px"
+            android:layout_width="wrap_content"
+            android:enabled="false"
+            tools:ignore="HardcodedText" />
+        <Button
+            android:text="EMG"
+            android:id="@+id/getEMG"
+            android:layout_height="wrap_content"
+            android:maxWidth="1000px"
+            android:minWidth="100px"
+            android:layout_width="wrap_content"
+            android:enabled="false"
+            tools:ignore="HardcodedText" />
+    </GridLayout>
+    <GridLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gridLayout5" />
+
 
 
 

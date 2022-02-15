@@ -23,48 +23,74 @@ namespace MyBluetooth
                 }
             }
         }
-        public async Task Recive(TextView test, Foam_Roller.MainActivity mainActivity)
+        public async Task Recive(TextView ECG, TextView EMG, Foam_Roller.MainActivity mainActivity)
         {
             await Task.Run(() =>
             {
+                string str = "";
+                string nb = "";
+                string type = "";
+                string res = "";
+                bool first = false;
+                bool iscmd = false;
+                int i = 0;
                 while (true)
                 {
-                    byte[] read = new byte[20];
+                    byte[] read = new byte[5];
                     try
                     {
-
                         if (!this.thisSocket.IsConnected)
                         {
-                            
-                            mainActivity.RunOnUiThread(() =>
-                            {
-                                test.Text += "Socket non connecté.";
-                            });
                             break;
                         }
 
-                        this.thisSocket.InputStream.Read(read, 0, 20);
-                        this.thisSocket.InputStream.Flush();
+                        this.thisSocket.InputStream.Read(read, 0, 5);
 
-                        mainActivity.RunOnUiThread(() =>
-                        {
-                            test.Text = Encoding.Default.GetString(read);
-                        });
+                        // Permet de parser le résultats 
+                        if (read.Length > 0)    
+                        { 
+                            str += Encoding.Default.GetString(read);
+                            i = 0;
+                            first = false;
+                            iscmd = false;
+                            nb = "";
+                            type = "";
+                            while (str.Length > i)
+                            {
+                                if (str[i] == '{')
+                                    first = true;
+                                if (str[i] >= 'A' && str[i] <= 'Z')
+                                    type += str[i];
+                                if (str[i] >= '0' && str[i] <= '9')
+                                    nb += str[i];
+                                if (str[i] == '}' && first != false)
+                                    iscmd = true;
+                                i++;
+                            }
+                            if (iscmd != false)
+                            {
+                                res = nb;
+                                if (type == "FC")
+                                    ECG.Text = "Fréauence cardique : " + res;
+                                else if (type == "EMG")
+                                    EMG.Text = "EMG : " + res;
+
+                                nb = "";
+                                str = "";
+                                type = "";
+                            }
+
+                        }
                     }
                     catch
                     {
-
-                        mainActivity.RunOnUiThread(() =>
-                        {
-                            test.Text += "Impossible de sur le socket.";
-                        });
                         break ;
                     }
                 }
             });
         }
 
-        public async Task send(TextView test, EditText editText, Foam_Roller.MainActivity mainActivity)
+        public async Task send(string text, Foam_Roller.MainActivity mainActivity)
         {
             await Task.Run(() =>
             {
@@ -72,13 +98,12 @@ namespace MyBluetooth
                 {
                     if (this.thisSocket.IsConnected)
                     {
-                        this.thisSocket.OutputStream.Write(Encoding.ASCII.GetBytes(editText.Text + "\n"), 0, editText.Text.Length + 1);
+                        this.thisSocket.OutputStream.Write(Encoding.ASCII.GetBytes(text + "\n"), 0, text.Length + 1);
                         this.thisSocket.OutputStream.Flush();
                     }
                 }
                 catch (Exception e)
                 {
-                    test.Text += "t";
                 }
             });
         }
@@ -118,9 +143,11 @@ namespace MyBluetooth
                 }
                 try
                 {
+                    if (!this.thisSocket.IsConnected)
+                        this.thisSocket.ConnectAsync();
                     while (!this.thisSocket.IsConnected) // Boucle infinie si le périphérique est éteint
                     { 
-                        this.thisSocket.ConnectAsync();
+                        //this.thisSocket.ConnectAsync();
                         mainActivity.RunOnUiThread(() =>
                         {
                             text.Text = "Attente de connection";

@@ -3,10 +3,7 @@ using Android.OS;
 using Android.Runtime;
 using AndroidX.AppCompat.App;
 using Android.Widget;
-using Android.Bluetooth;
 using Android.Util;
-using System;
-
 
 using MyBluetooth;
 
@@ -16,92 +13,114 @@ namespace Foam_Roller
         Theme = "@style/AppTheme", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
-        BluetoothConnection btConnection = null;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            //Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            // Set our view from the "main" layout resource
             DisplayMetrics display = new DisplayMetrics();
             WindowManager.DefaultDisplay.GetMetrics(display);
 
 
             SetContentView(Resource.Layout.activity_main);
-            LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.linearLayout1);
-            EditText UserNameText = FindViewById<EditText>(Resource.Id.UserNameText);
-            TextView ResponseText = FindViewById<TextView>(Resource.Id.ResponseText);
-            Button BtValide = FindViewById<Button>(Resource.Id.BtValide);
-            Button Connexion = FindViewById<Button>(Resource.Id.Connexion);
-            GridLayout grid = FindViewById<GridLayout>(Resource.Id.gridLayout1);
-            Button test1 = FindViewById<Button>(Resource.Id.test1);
-            Button test2 = FindViewById<Button>(Resource.Id.test2);
-            Button test3 = FindViewById<Button>(Resource.Id.test3);
 
-
-            test1.SetWidth(display.WidthPixels / 3);
-            test2.SetWidth(display.WidthPixels / 3);
-            test3.SetWidth(display.WidthPixels / 3);
-
-            TextView test = FindViewById<TextView>(Resource.Id.BluetoothStatusText);
+            BluetoothConnection btConnection = null;
             if (btConnection == null)
                 btConnection = new BluetoothConnection();
 
-            test1.Click += async (sender, args) =>
+            // Connection bluetooth
+            TextView status = FindViewById<TextView>(Resource.Id.status);
+            Button Connexion = FindViewById<Button>(Resource.Id.Connexion);
+
+            // Saisie du kinésithérapeute
+            EditText LastName = FindViewById<EditText>(Resource.Id.LastName);
+            EditText FirstName = FindViewById<EditText>(Resource.Id.FirstName);
+            EditText seuil = FindViewById<EditText>(Resource.Id.seuil);
+            LastName.SetWidth(display.WidthPixels / 3);
+            FirstName.SetWidth(display.WidthPixels / 3);
+            seuil.SetWidth(display.WidthPixels / 3);
+            Button BtValide = FindViewById<Button>(Resource.Id.BtValide);
+
+            // Information ECG / EMG
+            TextView ECG = FindViewById<TextView>(Resource.Id.ECG);
+            TextView EMG = FindViewById<TextView>(Resource.Id.EMG);
+            ECG.SetWidth(display.WidthPixels / 2);
+            EMG.SetWidth(display.WidthPixels / 2);
+            Button getECG = FindViewById<Button>(Resource.Id.getECG);
+            Button getEMG = FindViewById<Button>(Resource.Id.getEMG);
+            getECG.SetWidth(display.WidthPixels / 2);
+            getEMG.SetWidth(display.WidthPixels / 2);
+
+            BtValide.Click += delegate
+            {
+                LastName.Enabled = false;
+                FirstName.Enabled = false;
+                seuil.Enabled = false;
+                BtValide.Enabled = false;
+            };
+
+           /* test1.Click += async (sender, args) =>
             {
                 test1.Visibility = Android.Views.ViewStates.Gone;
-                await btConnection.Recive(test, this);
-                #region Old
-                /*
-                byte[] read = new byte[20];
-                try { 
-                    
-                    if (!btConnection.thisSocket.IsConnected)
-                        test.Text += "Je ne suis pas co";
+                await btConnection.Recive(test, this);*/
+            #region Old
+            /*
+            byte[] read = new byte[20];
+            try { 
 
-                    //if (btConnection.thisSocket.InputStream.Length > 0)
-                        btConnection.thisSocket.InputStream.Read(read, 0, 1);
-                    btConnection.thisSocket.InputStream.Flush();
-                    //btConnection.thisSocket.InputStream.Close();
-                    RunOnUiThread(() =>
-                    {
-                        test.Text += Encoding.Default.GetString(read);
-                       // test.Text += "Bonjour";
-                    });
-                    }
-                    catch
-                    {
-                        test.Text += "i cant Read";
-                    }*/
-                #endregion
-            };
+                if (!btConnection.thisSocket.IsConnected)
+                    test.Text += "Je ne suis pas co";
 
-
-            test2.Click += async (sender, args) =>
-            {
-                await btConnection.send(test, UserNameText, this);
-                #region Old
-                /*string send = "Bonjour";
-
-                try
+                //if (btConnection.thisSocket.InputStream.Length > 0)
+                    btConnection.thisSocket.InputStream.Read(read, 0, 1);
+                btConnection.thisSocket.InputStream.Flush();
+                //btConnection.thisSocket.InputStream.Close();
+                RunOnUiThread(() =>
                 {
-                    if (btConnection.thisSocket.IsConnected)
-                    {
-                        btConnection.thisSocket.OutputStream.Write(Encoding.ASCII.GetBytes(send + "\n") , 0, send.Length + 1);
-                        btConnection.thisSocket.OutputStream.Flush();
-                        test.Text += send;
-                    }
+                    test.Text += Encoding.Default.GetString(read);
+                   // test.Text += "Bonjour";
+                });
                 }
-                catch (Exception e)
+                catch
                 {
-                    test.Text += "t";
+                    test.Text += "i cant Read";
                 }*/
-                #endregion
-            };
+            #endregion
+            // };
+
+            /* test2.Click += async (sender, args) =>
+             {
+                 await btConnection.send(test, LastName, this);*/
+            #region Old
+            /*string send = "Bonjour";
+
+            try
+            {
+                if (btConnection.thisSocket.IsConnected)
+                {
+                    btConnection.thisSocket.OutputStream.Write(Encoding.ASCII.GetBytes(send + "\n") , 0, send.Length + 1);
+                    btConnection.thisSocket.OutputStream.Flush();
+                    test.Text += send;
+                }
+            }
+            catch (Exception e)
+            {
+                test.Text += "t";
+            }*/
+            #endregion
+            // };
 
             Connexion.Click += async (sender, args) =>
             {
-                Connexion.Visibility = Android.Views.ViewStates.Gone;
-                await btConnection.conect(test, this);
+                Connexion.Enabled = false;
+                await btConnection.conect(status, this);
+                if (btConnection.thisSocket.IsConnected == true)
+                {
+                    Connexion.Visibility = Android.Views.ViewStates.Gone;
+                    BtValide.Enabled = true;
+                    getECG.Enabled = true;
+                    getEMG.Enabled = true;
+                    await btConnection.Recive(ECG, EMG, this);
+                }
                 #region old
                 /*
                 if (btConnection == null)
@@ -144,6 +163,18 @@ namespace Foam_Roller
                 }*/
                 #endregion
             };
+
+            getECG.Click += async (sender, args) =>
+            {
+                await btConnection.send("{FC}", this);
+            };
+
+            getEMG.Click += async (sender, args) =>
+            {
+                await btConnection.send("{EMG}", this);
+            };
+
+
 
 
             #region old
@@ -221,22 +252,6 @@ namespace Foam_Roller
       };*/
 
             #endregion
-
-            // Bouton Valide, Vérifie si l'utilisateur est connu.
-            BtValide.Click += (sender, e) =>
-            {
-                string Response = Core.UserName.CheckUser(UserNameText.Text);
-                if (string.IsNullOrWhiteSpace(Response))
-                {
-                    ResponseText.Text = "";
-                    ResponseText.Visibility = Android.Views.ViewStates.Gone;
-                }
-                else
-                {
-                    ResponseText.Text = Response;
-                    ResponseText.Visibility = Android.Views.ViewStates.Visible;
-                }
-            };
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
